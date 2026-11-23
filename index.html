@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<base target="_blank">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Giochi PS5</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 108 108%22%3E%3Crect width=%22108%22 height=%22108%22 rx=%2224%22 fill=%22%230a2a7a%22/%3E%3Cpath fill=%22%23fff%22 d=%22M38,48H70C76,48 80,52 81,58L84,72C85,78 79,81 75,77L70,71H38L33,77C29,81 23,78 24,72L27,58C28,52 32,48 38,48Z%22/%3E%3Cpath fill=%22%23FFC531%22 d=%22M54,24L56.23,29.93L62.56,30.22L57.61,34.17L59.29,40.28L54,36.8L48.71,40.28L50.39,34.17L45.44,30.22L51.77,29.93Z%22/%3E%3C/svg%3E">
+<style>
+:root{--bg:#0b1020;--card:#141b33;--ink:#eef2ff;--mut:#9aa6c8;--blu:#0070d1;--bd:var(--bd);--lk:#6fb6ff;--ok:#2bb673;--mid:#f2b630;--ko:#e5484d}
+[data-tema=notte]{--bg:#000;--card:#121212;--ink:#f5f5f5;--mut:#9a9a9a;--blu:#3d7bff;--bd:#2a2a2a;--lk:#7aa7ff}
+[data-tema=chiaro]{--bg:#f3f5fa;--card:#fff;--ink:#141b33;--mut:#5b6685;--blu:#0070d1;--bd:#d5dbea;--lk:#0059a8}
+[data-tema=neon]{--bg:#12061f;--card:#1f0d33;--ink:#f6ecff;--mut:#b79bd6;--blu:#c03cff;--bd:#3d1d63;--lk:#3fe8ff}
+[data-tema=oro]{--bg:#0d0b07;--card:#1c1810;--ink:#fff6e0;--mut:#bfae86;--blu:#c99a2e;--bd:#3a311d;--lk:#e8c46a}
+[data-tema=foresta]{--bg:#0a1712;--card:#12261e;--ink:#eafff4;--mut:#8fb8a5;--blu:#1f9d6b;--bd:#1f3d31;--lk:#6fe0b0}
+[data-tema=tramonto]{--bg:#1a0c0c;--card:#2a1414;--ink:#fff0ea;--mut:#d2a194;--blu:#ff5a36;--bd:#4a2420;--lk:#ffb08a}
+.temi{margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.temi button{flex:1 1 90px;background:var(--card);border:2px solid var(--bd);font-size:14px;font-weight:600}
+.temi[hidden]{display:none}
+.temi button.on{border-color:var(--blu)}
+.temi i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 14px 10px}
+h1{margin:0 0 10px;font-size:26px;display:flex;justify-content:space-between;align-items:center}
+h1 small{font-size:13px;color:var(--mut);font-weight:400}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,button{font:inherit;font-size:16px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--ink);padding:10px 12px;min-height:44px}
+input{flex:1 1 180px}select{flex:1 1 150px}
+button{background:var(--blu);border-color:var(--blu);font-weight:600}
+button.sec{background:var(--card);border-color:var(--bd)}
+label.chk{display:flex;align-items:center;gap:6px;color:var(--mut);font-size:14px}
+label.chk input{flex:none;min-height:auto}
+main{padding:0 14px 30px}
+.g{display:grid;grid-template-columns:34px 92px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--card);border-radius:14px;padding:8px 10px;margin:8px 0;text-decoration:none;color:inherit}
+.n{font-weight:700;color:var(--mut);text-align:center}
+.g img,.ph{width:92px;height:56px;object-fit:cover;border-radius:8px;background:var(--bd)}
+.t{font-weight:600;line-height:1.2}
+.s{font-size:13px;color:var(--mut)}
+.v{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.b{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--mut);white-space:nowrap}
+.mc{min-width:34px;text-align:center;font-weight:800;border-radius:7px;padding:2px 5px;color:#000;font-size:14px}
+.st{font-size:13px;color:var(--mid);white-space:nowrap}
+.msg{color:var(--mut);text-align:center;padding:18px 10px}
+#cfg{background:var(--card);border-radius:14px;padding:14px;margin:8px 0}
+#cfg p{margin:0 0 10px;color:var(--mut);font-size:14px}
+a{color:var(--lk)}
+.det{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;padding:12px 14px 30px}
+.det[hidden],.lb[hidden]{display:none}
+.det h2{font-size:24px;line-height:1.15;margin:10px 0 4px}
+.det video{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;display:block}
+.vid{display:flex;gap:6px;overflow-x:auto;margin:8px 0}
+.vid button{flex:none;font-size:14px;min-height:38px;padding:6px 10px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:10px 0}
+.gal img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:var(--bd)}
+.voti{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.voti span{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 10px;font-size:14px}
+.lb{position:fixed;inset:0;z-index:30;background:#000e;display:flex;align-items:center;justify-content:center}
+.lb img{max-width:100%;max-height:100%}
+.btn{display:inline-block;background:var(--blu);color:#fff;text-decoration:none;border-radius:12px;padding:10px 14px;font-weight:600;margin:4px 6px 4px 0}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:10px 0 24px}
+</style>
+</head>
+<body>
+<header>
+  <h1><span style="display:flex;align-items:center;gap:8px">Giochi PS5 <button id="btema" class="sec" aria-label="Temi" style="min-height:40px;padding:6px 10px"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 0 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.8-1.7H17a4 4 0 0 0 4-4c0-4.4-4-8.2-9-8.2zM6.5 12a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg></button></span><small id="tot"></small></h1>
+  <div class="row">
+    <input id="q" type="search" placeholder="Cerca un gioco…">
+    <select id="ord">
+      <option value="avg">Media dei voti</option>
+      <option value="mc">Metacritic</option>
+      <option value="oc">OpenCritic</option>
+      <option value="st">Recensioni Steam</option>
+      <option value="ita">Siti italiani</option>
+      <option value="d">Più recenti</option>
+      <option value="n">Nome A–Z</option>
+    </select>
+    <button id="set" class="sec" aria-label="Impostazioni">⚙</button>
+  </div>
+  <div class="row" style="margin-top:6px">
+    <label class="chk"><input id="solo" type="checkbox"> Solo giochi con voto</label>
+  </div>
+</header>
+<main>
+  <div id="cfg" hidden>
+    <p>Elenco giochi: Wikidata e Wikipedia. Voti: Metacritic, OpenCritic, recensioni Steam, Multiplayer.it, Everyeye, SpazioGames, Eurogamer.it, IGN Italia. I voti dei siti arrivano poco alla volta mentre scorri la lista.</p>
+    <p><b>Versione web:</b> il browser permette di leggere solo Wikidata e Wikipedia (Metacritic, OpenCritic, copertine e immagini). Steam, i siti italiani e i trailer integrati funzionano solo nell'app Android.</p>
+    <div class="row"><button id="upd" class="sec">Aggiorna i dati da internet</button><button id="ord2" class="sec">Riordina con i nuovi voti</button></div>
+  </div>
+  <div id="info" class="msg"></div>
+  <div id="list"></div>
+  <div id="det" class="det" hidden></div><div id="lb" class="lb" hidden><img id="lbi" alt=""></div>
+  <footer>Dati: Wikidata, Wikipedia, Metacritic, OpenCritic, Steam, Multiplayer.it, Everyeye, SpazioGames, Eurogamer.it, IGN Italia · Copyright © Ignazio Paolicelli</footer>
+</main>
+<script>
+{
+const $=id=>document.getElementById(id);
+const WEB=!window.Net;
+const store={get:k=>{try{return localStorage.getItem(k)||''}catch(e){return''}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+let last=0,fonti='',cb={},cid=0,G=[],view=[],shown=0,busy=false;
+window.onNet=(id,code,txt)=>{const f=cb[id];delete cb[id];if(f)f(code,txt)};
+const req=url=>new Promise(res=>{const id=++cid;cb[id]=(c,t)=>res({c,t:t||''});
+  if(window.Net)Net.get(url,id);else fetch(WEB&&url.includes('wikipedia.org/w/api.php')?url+'&origin=*':url).then(r=>r.text().then(t=>onNet(id,r.status,t))).catch(()=>onNet(id,-1,''))});
+const get=url=>req(url).then(({c,t})=>{last=c;if(c!==200)return null;try{return JSON.parse(t)}catch(e){return null}});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const kk=s=>s.toLowerCase().replace(/[™®:'’\-–.,!?&]/g,'').replace(/\s+/g,'');
+const col=m=>m>=75?'var(--ok)':m>=50?'var(--mid)':'var(--ko)';
+const dt=d=>d?d.split('-').reverse().join('/'):'';
+const oggi=new Date().toISOString().slice(0,10);
+const info=t=>$('info').textContent=t;
+function sc(v){const m=String(v).match(/([\d.,]+)\s*(?:\/\s*(\d+))?/);if(!m)return 0;const n=parseFloat(m[1].replace(',','.'));const d=m[2]?+m[2]:(n<=10?10:100);return Math.round(n*100/d)}
+const SPARQL=`SELECT ?g ?gLabel ?enl ?d ?v ?rl ?art WHERE {
+{?ps rdfs:label "PlayStation 5"@en} UNION {VALUES ?ps {wd:Q63184502}}
+?g wdt:P400 ?ps .
+OPTIONAL{?g wdt:P577 ?d}
+OPTIONAL{?g p:P444 ?s . ?s ps:P444 ?v ; pq:P447 ?r . ?r rdfs:label ?rl FILTER(LANG(?rl)="en")}
+OPTIONAL{?g rdfs:label ?enl FILTER(LANG(?enl)="en")}
+OPTIONAL{?art schema:about ?g ; schema:isPartOf <https://en.wikipedia.org/>}
+SERVICE wikibase:label { bd:serviceParam wikibase:language "it,en". }
+}`;
+const LISTE=["List of PlayStation 5 games","List of PlayStation 5 games (A–L)","List of PlayStation 5 games (M–Z)"];
+async function scarica(){
+  busy=true;$('list').innerHTML='';const M=new Map(),N={wd:0,wp:0,rawg:0},E=[];
+  const add=(n,en,x)=>{const k=kk(en||n);let o=M.get(k);if(!o){o={n,d:'',mc:0,oc:0,u:0,img:'',url:''};M.set(k,o)}
+    if(x.d&&(!o.d||x.d<o.d))o.d=x.d;if(x.mc)o.mc=Math.max(o.mc,x.mc);if(x.oc)o.oc=Math.max(o.oc,x.oc);if(x.u)o.u=x.u;
+    if(x.img&&!o.img)o.img=x.img;if(x.wp&&!o.wp){o.wp=x.wp;o.url='https://en.wikipedia.org/wiki/'+encodeURIComponent(x.wp.replace(/ /g,'_'))}
+    if(x.url&&!o.url)o.url=x.url;return o};
+  info('1/2 · Scarico da Wikidata…');
+  const w=await get('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(SPARQL));
+  if(!w)E.push('Wikidata (errore '+last+')');
+  const visti=new Set();
+  for(const b of (w?.results?.bindings||[])){
+    const n=b.gLabel?.value;if(!n||/^Q\d+$/.test(n))continue;
+    const x={d:(b.d?.value||'').slice(0,10)},rl=b.rl?.value||'',v=b.v?.value;
+    if(v&&/metacritic/i.test(rl))x.mc=sc(v);if(v&&/opencritic/i.test(rl))x.oc=sc(v);
+    if(b.art)x.wp=decodeURIComponent(b.art.value.split('/wiki/')[1]).replace(/_/g,' ');
+    add(n,b.enl?.value,x);visti.add(b.g.value);
+  }
+  N.wd=visti.size;
+  info('2/2 · Scarico le liste di Wikipedia…');
+  for(const t of LISTE){
+    const r=await get('https://en.wikipedia.org/w/api.php?action=parse&format=json&prop=wikitext&redirects=1&page='+encodeURIComponent(t));
+    const tx=r?.parse?.wikitext?.['*'];if(!tx)continue;
+    for(const row of tx.split(/\n\|-/).slice(1)){
+      let m=row.match(/''\[\[([^\]|]+)(?:\|([^\]]+))?\]\]''/),n,wp='';
+      if(m){wp=m[1].trim();n=(m[2]||m[1]).trim()}else{m=row.match(/^\s*\n?[|!][^\n]*?''([^'\[\]\n]{2,80})''/);if(!m)continue;n=m[1].trim()}
+      const dm=row.match(/\{\{\s*(?:dts|start date)\s*\|\s*(\d{4})\s*\|\s*(\d{1,2})\s*\|\s*(\d{1,2})/i);
+      const d=dm?dm[1]+'-'+dm[2].padStart(2,'0')+'-'+dm[3].padStart(2,'0'):'';
+      if(!d&&/unreleased|\bTBA\b/i.test(row))continue;
+      add(n,n,{d,wp});N.wp++;
+    }
+  }
+  const old=new Map(G.map(o=>[kk(o.n),o]));
+  G=[...M.values()].filter(o=>!o.d||o.d<=oggi);
+  for(const o of G){const p=old.get(kk(o.n));if(p){o.r=p.r;o.st=p.st;o.rv=p.rv;o.img=o.img||p.img}}
+  fonti='Con voto '+G.filter(o=>avg(o)>0).length+' · Wikidata '+N.wd+' · Wikipedia '+N.wp+' '+(E.length?' · Non risponde: '+E.join(', '):'');
+  busy=false;
+  if(!G.length){info('Nessun dato ricevuto. '+fonti+'. Controlla internet e riprova da ⚙.');return}
+  salva();mostra();
+}
+function salva(){store.set('dati',JSON.stringify({v:3,t:Date.now(),G,fonti}))}
+const SITI=[['MP','Multiplayer.it','multiplayer.it'],['EY','Everyeye','everyeye.it'],['SG','SpazioGames','spaziogames.it'],['EG','Eurogamer','eurogamer.it'],['IGN','IGN Italia','it.ign.com']];
+const ita=o=>{const a=SITI.map(z=>(o.r||{})[z[0]]).filter(x=>x);return a.length?a.reduce((x,y)=>x+y)/a.length:0};
+const voti=o=>[o.mc,o.oc,o.st,...SITI.map(z=>(o.r||{})[z[0]])].filter(x=>x);
+const avg=o=>{const a=voti(o);return a.length?a.reduce((x,y)=>x+y)/a.length:0};
+function mostra(){
+  const q=kk($('q').value),o=$('ord').value,solo=$('solo').checked;
+  const f={avg,mc:x=>x.mc||0,oc:x=>x.oc||0,st:x=>x.st||0,ita};
+  if(!f[o]&&o!=='d'&&o!=='n'){$('ord').value='avg';store.set('ord','avg');return mostra()}
+  view=G.filter(x=>(!q||kk(x.n).includes(q))&&(!solo||avg(x)>0));
+  if(o==='d')view.sort((a,b)=>b.d.localeCompare(a.d));
+  else if(o==='n')view.sort((a,b)=>a.n.localeCompare(b.n,'it'));
+  else view.sort((a,b)=>(f[o](b)-f[o](a))||(avg(b)-avg(a)));
+  $('tot').textContent=view.length.toLocaleString('it-IT')+' giochi';
+  $('list').innerHTML='';shown=0;
+  if(!view.length&&G.length){
+    if(solo&&!q){$('solo').checked=false;return mostra()}
+    info('Nessun gioco trovato con questa ricerca ('+G.length+' giochi in archivio). '+fonti);return}
+  info(fonti);altri();
+}
+function card(x,i){
+  const img=x.img?'<img loading="lazy" src="'+esc(x.img)+'" alt="">':'<div class="ph"></div>';
+  const p=[['MC',x.mc],['OC',x.oc],['Steam',x.st,'%'],...SITI.map(z=>[z[0],(x.r||{})[z[0]],'/10'])].filter(z=>z[1]);
+  const fonti=p.map(z=>z[0]+' '+(z[2]==='/10'?(z[1]/10).toFixed(1).replace('.',','):z[1]+(z[2]||''))).join(' · ');
+  const m=Math.round(avg(x)),n=voti(x).length;
+  return '<a class="g" data-i="'+i+'" href="'+esc(x.url||'https://www.google.com/search?q='+encodeURIComponent(x.n+' PS5'))+'"><div class="n">'+(i+1)+'</div>'+img+
+   '<div><div class="t">'+esc(x.n)+'</div><div class="s">'+dt(x.d)+'</div>'+(fonti?'<div class="s" style="font-size:12px">'+fonti+'</div>':'')+'</div>'+
+   '<div class="v">'+(m?'<span class="mc" style="background:'+col(m)+';font-size:18px;padding:5px 8px">'+m+'</span><div class="b">media di '+n+'</div>':'<div class="b">'+(x.rv?'nessun voto':'cerco voti…')+'</div>')+'</div></a>';
+}
+function altri(){
+  if(shown>=view.length)return;
+  const a=shown,b=Math.min(view.length,shown+50);
+  $('list').insertAdjacentHTML('beforeend',view.slice(a,b).map((x,j)=>card(x,a+j)).join(''));
+  shown=b;copertine(a,b);accoda(view.slice(a,b));
+}
+function metti(x){const i=view.indexOf(x);const el=document.querySelector('.g[data-i="'+i+'"]');if(el)el.outerHTML=card(x,i)}
+async function copertine(a,b){
+  const L=view.slice(a,b).filter(x=>!x.img&&!x.tr);L.forEach(x=>x.tr=1);
+  L.forEach(x=>{if(!x.wp)x.wq=x.n});const W=L;
+  for(let i=0;i<W.length;i+=40){
+    const part=W.slice(i,i+40);
+    const r=await get('https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=320&pilicense=any&titles='+encodeURIComponent(part.map(x=>x.wp||x.wq).join('|')));
+    if(!r?.query)continue;
+    const nm={},rd={},img={};
+    for(const z of r.query.normalized||[])nm[z.from]=z.to;
+    for(const z of r.query.redirects||[])rd[z.from]=z.to;
+    for(const p of Object.values(r.query.pages||{}))if(p.thumbnail)img[p.title]=p.thumbnail.source;
+    for(const x of part){const w=x.wp||x.wq;let t=nm[w]||w;t=rd[t]||t;if(img[t]){x.img=img[t];metti(x)}}
+  }
+  for(const x of L.filter(x=>!x.img)){const u=await bing(x.n+' PS5 cover',1);if(u[0]){x.img=u[0];metti(x)}}
+  salva();
+}
+const TEMI=[['','PlayStation','#0070d1'],['notte','Notte','#000'],['chiaro','Chiaro','#f3f5fa'],['neon','Neon','#c03cff'],['oro','Oro','#c99a2e'],['foresta','Foresta','#1f9d6b'],['tramonto','Tramonto','#ff5a36']];
+function tema(t){document.documentElement.dataset.tema=t;store.set('tema',t)}
+let tt;$('btema').onclick=()=>{const i=TEMI.findIndex(x=>x[0]===(store.get('tema')||''));const x=TEMI[(i+1)%TEMI.length];tema(x[0]);
+  const v=$('tot');clearTimeout(tt);v.dataset.o=v.dataset.o||v.textContent;v.textContent='Tema: '+x[1];tt=setTimeout(()=>{v.textContent=v.dataset.o;delete v.dataset.o},1500)};
+tema(store.get('tema'));
+$('set').onclick=()=>{$('cfg').hidden=!$('cfg').hidden};
+$('ord2').onclick=()=>{$('cfg').hidden=true;mostra()};
+$('upd').onclick=()=>{$('cfg').hidden=true;if(!busy)scarica()};
+const base=t=>kk(String(t).replace(/\(.*?\)/g,'').replace(/\s*[-–:]?\s+(?:the\s+)?(digital deluxe|deluxe|standard|game of the year|goty|complete|definitive|ultimate|gold|director'?s cut)(\s+edition)?\s*$/i,'').replace(/\b(edition|ps5|playstation 5)\b/gi,''));
+const simile=(a,b)=>base(a)===base(b);
+async function steam(x){
+  if(WEB)return;
+  const r=await get('https://store.steampowered.com/api/storesearch/?l=italian&cc=IT&term='+encodeURIComponent(x.n));
+  const it=(r?.items||[]).find(s=>simile(s.name,x.n));if(!it)return;
+  x.sid=it.id;if(!x.img){x.img=it.tiny_image}
+  const v=await get('https://store.steampowered.com/appreviews/'+it.id+'?json=1&language=all&purchase_type=all&num_per_page=0');
+  const q=v?.query_summary;if(q&&q.total_reviews>=20)x.st=Math.round(100*q.total_positive/q.total_reviews);
+}
+async function cerca(dom,name){
+  if(WEB)return;
+  const q=encodeURIComponent('site:'+dom+' recensione '+name);
+  let t=(await req('https://html.duckduckgo.com/html/?q='+q)).t;
+  let L=[...t.matchAll(/uddg=([^&"]+)/g)].map(m=>{try{return decodeURIComponent(m[1])}catch(e){return''}});
+  if(!L.length){t=(await req('https://www.bing.com/search?setlang=it&q='+q)).t;L=[...t.matchAll(/<h2[^>]*><a[^>]+href="(https?:\/\/[^"]+)"/g)].map(m=>m[1].replace(/&amp;/g,'&'))}
+  const w=base(name);
+  return L.find(l=>l.includes(dom)&&/recensi|review/i.test(l)&&kk(l).includes(w));
+}
+function voto(h){
+  const m=h.match(/"ratingValue"\s*:\s*"?([\d.,]+)/);if(!m)return 0;
+  const v=parseFloat(m[1].replace(',','.'));const b=h.match(/"bestRating"\s*:\s*"?([\d.,]+)/);
+  const best=b?parseFloat(b[1].replace(',','.')):(v<=10?10:100);
+  return v>0&&v<=best?Math.round(v*100/best):0;
+}
+const coda=[];let attivi=0,ts;
+const salvaPresto=()=>{clearTimeout(ts);ts=setTimeout(salva,4000)};
+function accoda(l){for(const x of l)if(!x.rv&&!coda.includes(x))coda.push(x);const k=Math.min(3-attivi,coda.length);for(let i=0;i<k;i++)lavora()}
+async function lavora(){attivi++;
+  while(coda.length){const x=coda.shift();
+    try{await steam(x);metti(x);
+      for(const z of SITI){const u=await cerca(z[2],x.n);if(!u)continue;const v=voto((await req(u)).t);if(v){(x.r=x.r||{})[z[0]]=v;metti(x)}}
+    }catch(e){}
+    x.rv=1;metti(x);salvaPresto()}
+  attivi--}
+async function bing(q,n){
+  if(WEB)return [];
+  const t=(await req('https://www.bing.com/images/search?form=HDRSC2&first=1&q='+encodeURIComponent(q))).t;
+  return [...t.matchAll(/murl&quot;:&quot;(https?:[^&]+?)&quot;/g)].map(m=>m[1]).filter(u=>/\.(jpe?g|png|webp)(\?|$)/i.test(u)).slice(0,n);
+}
+const YT=(n,t)=>'https://www.youtube.com/results?search_query='+encodeURIComponent(n+' '+t+' PS5');
+let aperto=null;
+async function apri(i){
+  const x=view[i];if(!x)return;aperto=x;
+  const p=[['Metacritic',x.mc],['OpenCritic',x.oc],['Steam',x.st,'%'],...SITI.map(z=>[z[1],(x.r||{})[z[0]],'/10'])].filter(z=>z[1]);
+  const m=Math.round(avg(x));
+  $('det').innerHTML='<button class="sec" id="chiudi">← Indietro</button><h2>'+esc(x.n)+'</h2><div class="s">'+(dt(x.d)||'')+'</div>'+
+    '<div class="voti">'+(m?'<span style="background:'+col(m)+';color:#000;font-weight:800">Media '+m+'</span>':'')+p.map(z=>'<span>'+z[0]+' <b>'+(z[2]==='/10'?(z[1]/10).toFixed(1).replace('.',','):z[1]+(z[2]||''))+'</b></span>').join('')+'</div>'+
+    '<div id="dv"><div class="msg">Cerco il trailer…</div></div><div id="dd" class="s"></div><div id="dg" class="gal">'+(x.img?'<img src="'+esc(x.img)+'" alt="">':'')+'</div>'+
+    '<a class="btn" href="'+YT(x.n,'trailer')+'">▶ Trailer su YouTube</a><a class="btn" href="'+YT(x.n,'gameplay')+'">▶ Gameplay su YouTube</a>'+'<a class="btn" style="background:var(--card);border:1px solid var(--bd)" href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent(x.n+' PS5')+'">Altre immagini su Google</a>'+(x.url?'<a class="btn" href="'+esc(x.url)+'" style="background:var(--card);border:1px solid var(--bd)">Scheda Wikipedia</a>':'');
+  $('det').hidden=false;$('det').scrollTop=0;
+  if(!x.sid)await steam(x).catch(()=>{});
+  if(aperto!==x)return;
+  const d=x.sid?await get('https://store.steampowered.com/api/appdetails?l=italian&cc=IT&appids='+x.sid):null;
+  if(aperto!==x)return;
+  const g=d?.[x.sid]?.data;
+  const mv=(g?.movies||[]).map(v=>({n:v.name,poster:v.thumbnail,src:v.mp4?.max||v.webm?.max||v.hls_h264||v.mp4?.['480']||''})).filter(v=>v.src).slice(0,6);
+  if(mv.length){
+    const play=k=>{$('dv').querySelector('video').outerHTML='<video controls playsinline poster="'+esc(mv[k].poster)+'" src="'+esc(mv[k].src)+'"></video>'};
+    $('dv').innerHTML='<video></video>'+(mv.length>1?'<div class="vid">'+mv.map((v,k)=>'<button class="sec" data-k="'+k+'">'+esc(v.n||('Video '+(k+1)))+'</button>').join('')+'</div>':'');
+    play(0);$('dv').onclick=e=>{const b=e.target.closest('button[data-k]');if(b)play(+b.dataset.k)};
+  }else $('dv').innerHTML='<div class="msg">Video non disponibile qui: guardalo su YouTube con i pulsanti in basso.</div>';
+  if(g?.short_description){const t=document.createElement('div');t.innerHTML=g.short_description;$('dd').textContent=t.textContent}
+  const sc=(g?.screenshots||[]).map(z=>z.path_full).slice(0,12);if(g)$('dg').innerHTML='';
+  if(!sc.length){
+    const r=await get('https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&generator=images&gimlimit=40&prop=imageinfo&iiprop=url&iiurlwidth=800&titles='+encodeURIComponent(x.wp||x.n));
+    for(const p of Object.values(r?.query?.pages||{})){const ii=p.imageinfo?.[0];if(ii&&/\.(jpe?g|png|webp)$/i.test(p.title)&&!/logo|icon|flag|commons|wiki/i.test(p.title))sc.push(ii.thumburl||ii.url)}
+    if(aperto!==x)return;
+  }
+  if(!sc.length){sc.push(...await bing(x.n+' PS5 screenshot gameplay',12));if(aperto!==x)return}
+  if(sc.length){$('dg').innerHTML=sc.slice(0,12).map(u=>'<img loading="lazy" src="'+esc(u)+'" alt="">').join('');if(!x.img){x.img=sc[0];metti(x)}}
+  metti(x);
+}
+window.indietro=()=>{if(!$('lb').hidden){$('lb').hidden=true;return true}
+  if(!$('det').hidden){$('det').querySelectorAll('video').forEach(v=>v.pause());$('det').hidden=true;aperto=null;return true}return false};
+$('det').addEventListener('click',e=>{if(e.target.id==='chiudi')indietro();else if(e.target.tagName==='IMG'&&e.target.closest('#dg')){$('lbi').src=e.target.src;$('lb').hidden=false}});
+$('lb').onclick=()=>{$('lb').hidden=true};
+$('list').addEventListener('click',e=>{const a=e.target.closest('.g');if(a){e.preventDefault();apri(+a.dataset.i)}});
+let tm;$('q').oninput=()=>{clearTimeout(tm);tm=setTimeout(mostra,250)};
+$('ord').onchange=()=>{store.set('ord',$('ord').value);mostra()};
+try{localStorage.removeItem('dati_v1')}catch(e){}
+$('solo').onchange=mostra;
+window.addEventListener('scroll',()=>{if(innerHeight+scrollY>document.body.offsetHeight-500)altri()});
+if(store.get('ord'))$('ord').value=store.get('ord');
+let c=null;try{c=JSON.parse(store.get('dati')||'null')}catch(e){}
+if(c&&c.G&&c.G.length&&Date.now()-c.t<864e5*7){G=c.G;fonti=c.fonti||'';if(c.v!==3)for(const o of G)if(!o.img)delete o.tr;if(c.v!==2&&c.v!==3)for(const o of G){delete o.sid;delete o.st;delete o.r;delete o.rv;if(/steam/.test(o.img||'')){o.img='';delete o.tr}}mostra()}else scarica();
+}
+</script>
+</body>
+</html>
