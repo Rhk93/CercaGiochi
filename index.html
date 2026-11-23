@@ -78,13 +78,18 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px 0 24px}
     <button id="set" class="sec" aria-label="Impostazioni">⚙</button>
   </div>
   <div class="row" style="margin-top:6px">
+    <select id="da" aria-label="Dall'anno" style="flex:1 1 90px"></select>
+    <select id="al" aria-label="All'anno" style="flex:1 1 90px"></select>
+    <select id="cat" aria-label="Categoria" style="flex:2 1 160px"></select>
+  </div>
+  <div class="row" style="margin-top:6px">
     <label class="chk"><input id="solo" type="checkbox"> Solo giochi con voto</label>
   </div>
 </header>
 <main>
   <div id="cfg" hidden>
     <p>Elenco giochi: Wikidata e Wikipedia. Voti: Metacritic, OpenCritic, recensioni Steam, Multiplayer.it, Everyeye, SpazioGames, Eurogamer.it, IGN Italia. I voti dei siti arrivano poco alla volta mentre scorri la lista.</p>
-    <p><b>Versione web:</b> il browser permette di leggere solo Wikidata e Wikipedia (Metacritic, OpenCritic, copertine e immagini). Steam, i siti italiani e i trailer integrati funzionano solo nell'app Android.</p>
+    <p><b>Versione web:</b> il browser permette di leggere solo Wikidata e Wikipedia (Metacritic, OpenCritic, categorie, copertine e immagini). Steam, i siti italiani e i trailer integrati funzionano solo nell'app Android.</p>
     <div class="row"><button id="upd" class="sec">Aggiorna i dati da internet</button><button id="ord2" class="sec">Riordina con i nuovi voti</button></div>
   </div>
   <div id="info" class="msg"></div>
@@ -118,6 +123,13 @@ OPTIONAL{?g rdfs:label ?enl FILTER(LANG(?enl)="en")}
 OPTIONAL{?art schema:about ?g ; schema:isPartOf <https://en.wikipedia.org/>}
 SERVICE wikibase:label { bd:serviceParam wikibase:language "it,en". }
 }`;
+const CAT=[['Azione',/azione|action/],['Avventura',/avventura|adventure/],['Sparatutto',/sparatutto|shooter/],['Guerra',/guerra|\bwar\b|warfare|militar/],['Ruolo (GDR)',/ruolo|role-playing|\brpg\b|gdr|soulslike/],['Open world',/open world|mondo aperto/],['Horror',/horror|survival/],['Sport',/sport|calcio|football|basket|tennis|golf|wrestling|boxe|boxing/],['Corse',/corse|racing|guida|driving/],['Picchiaduro',/picchiaduro|fighting|beat 'em up|hack and slash/],['Platform',/piattaform|platform/],['Strategia',/strategi|tattic|tactic/],['Simulazione',/simula|sandbox|gestional|city-building/],['Rompicapo',/rompicapo|puzzle/],['Stealth',/stealth/],['Musicali',/musical|music|rhythm|ritmo/],['Roguelike',/roguelike|roguelite|metroidvania/],['Battle royale',/battle royale/],['Online / MMO',/mmo|massively|multigiocatore online/],['Indie',/indie/]];
+const cats=(o,txt)=>{txt=String(txt).toLowerCase();o.c=o.c||[];for(const[k,r]of CAT)if(r.test(txt)&&!o.c.includes(k))o.c.push(k)};
+const GENERI=`SELECT ?g ?geLabel WHERE {
+{?ps rdfs:label "PlayStation 5"@en} UNION {VALUES ?ps {wd:Q63184502}}
+?g wdt:P400 ?ps . {?g wdt:P136 ?ge} UNION {?g wdt:P921 ?ge}
+SERVICE wikibase:label { bd:serviceParam wikibase:language "it,en". }
+}`;
 const LISTE=["List of PlayStation 5 games","List of PlayStation 5 games (A–L)","List of PlayStation 5 games (M–Z)"];
 async function scarica(){
   busy=true;$('list').innerHTML='';const M=new Map(),N={wd:0,wp:0,rawg:0},E=[];
@@ -128,15 +140,18 @@ async function scarica(){
   info('1/2 · Scarico da Wikidata…');
   const w=await get('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(SPARQL));
   if(!w)E.push('Wikidata (errore '+last+')');
-  const visti=new Set();
+  const visti=new Set(),byQ={};
   for(const b of (w?.results?.bindings||[])){
     const n=b.gLabel?.value;if(!n||/^Q\d+$/.test(n))continue;
     const x={d:(b.d?.value||'').slice(0,10)},rl=b.rl?.value||'',v=b.v?.value;
     if(v&&/metacritic/i.test(rl))x.mc=sc(v);if(v&&/opencritic/i.test(rl))x.oc=sc(v);
     if(b.art)x.wp=decodeURIComponent(b.art.value.split('/wiki/')[1]).replace(/_/g,' ');
-    add(n,b.enl?.value,x);visti.add(b.g.value);
+    byQ[b.g.value]=add(n,b.enl?.value,x);visti.add(b.g.value);
   }
   N.wd=visti.size;
+  info('1/2 · Scarico le categorie…');
+  const gr=await get('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(GENERI));
+  for(const b of (gr?.results?.bindings||[])){const o=byQ[b.g.value];if(o&&b.geLabel)cats(o,b.geLabel.value)}
   info('2/2 · Scarico le liste di Wikipedia…');
   for(const t of LISTE){
     const r=await get('https://en.wikipedia.org/w/api.php?action=parse&format=json&prop=wikitext&redirects=1&page='+encodeURIComponent(t));
@@ -152,22 +167,32 @@ async function scarica(){
   }
   const old=new Map(G.map(o=>[kk(o.n),o]));
   G=[...M.values()].filter(o=>!o.d||o.d<=oggi);
-  for(const o of G){const p=old.get(kk(o.n));if(p){o.r=p.r;o.st=p.st;o.rv=p.rv;o.img=o.img||p.img}}
+  for(const o of G){const p=old.get(kk(o.n));if(p){if(p.c)for(const k of p.c)if(!(o.c=o.c||[]).includes(k))o.c.push(k);o.r=p.r;o.st=p.st;o.rv=p.rv;o.img=o.img||p.img}}
   fonti='Con voto '+G.filter(o=>avg(o)>0).length+' · Wikidata '+N.wd+' · Wikipedia '+N.wp+' '+(E.length?' · Non risponde: '+E.join(', '):'');
   busy=false;
   if(!G.length){info('Nessun dato ricevuto. '+fonti+'. Controlla internet e riprova da ⚙.');return}
-  salva();mostra();
+  salva();menu();mostra();
 }
-function salva(){store.set('dati',JSON.stringify({v:3,t:Date.now(),G,fonti}))}
+function salva(){store.set('dati',JSON.stringify({v:4,t:Date.now(),G,fonti}))}
 const SITI=[['MP','Multiplayer.it','multiplayer.it'],['EY','Everyeye','everyeye.it'],['SG','SpazioGames','spaziogames.it'],['EG','Eurogamer','eurogamer.it'],['IGN','IGN Italia','it.ign.com']];
 const ita=o=>{const a=SITI.map(z=>(o.r||{})[z[0]]).filter(x=>x);return a.length?a.reduce((x,y)=>x+y)/a.length:0};
 const voti=o=>[o.mc,o.oc,o.st,...SITI.map(z=>(o.r||{})[z[0]])].filter(x=>x);
 const avg=o=>{const a=voti(o);return a.length?a.reduce((x,y)=>x+y)/a.length:0};
+function menu(){
+  const f=JSON.parse(store.get('filtri')||'{}'),ys=G.map(x=>+String(x.d).slice(0,4)).filter(y=>y>1970),min=Math.min(...ys,2020),max=Math.max(...ys,new Date().getFullYear());
+  let o='';for(let y=max;y>=min;y--)o+='<option>'+y+'</option>';
+  $('da').innerHTML='<option value="">Dal (tutti)</option>'+o;$('al').innerHTML='<option value="">Al (tutti)</option>'+o;
+  const n={};for(const x of G)for(const k of x.c||[])n[k]=(n[k]||0)+1;
+  $('cat').innerHTML='<option value="">Tutte le categorie</option>'+CAT.filter(c=>n[c[0]]).map(c=>'<option value="'+c[0]+'">'+c[0]+' ('+n[c[0]]+')</option>').join('');
+  if(f.da)$('da').value=f.da;if(f.al&&f.al!==9999)$('al').value=f.al;if(f.ct)$('cat').value=f.ct;
+}
 function mostra(){
   const q=kk($('q').value),o=$('ord').value,solo=$('solo').checked;
   const f={avg,mc:x=>x.mc||0,oc:x=>x.oc||0,st:x=>x.st||0,ita};
   if(!f[o]&&o!=='d'&&o!=='n'){$('ord').value='avg';store.set('ord','avg');return mostra()}
-  view=G.filter(x=>(!q||kk(x.n).includes(q))&&(!solo||avg(x)>0));
+  const da=+$('da').value||0,al=+$('al').value||9999,ct=$('cat').value;
+  store.set('filtri',JSON.stringify({da,al,ct}));
+  view=G.filter(x=>{const y=+String(x.d).slice(0,4);return(!q||kk(x.n).includes(q))&&(!solo||avg(x)>0)&&(!da&&al===9999||y&&y>=da&&y<=al)&&(!ct||(x.c||[]).includes(ct))});
   if(o==='d')view.sort((a,b)=>b.d.localeCompare(a.d));
   else if(o==='n')view.sort((a,b)=>a.n.localeCompare(b.n,'it'));
   else view.sort((a,b)=>(f[o](b)-f[o](a))||(avg(b)-avg(a)));
@@ -274,6 +299,7 @@ async function apri(i){
   const d=x.sid?await get('https://store.steampowered.com/api/appdetails?l=italian&cc=IT&appids='+x.sid):null;
   if(aperto!==x)return;
   const g=d?.[x.sid]?.data;
+  if(g)cats(x,(g.genres||[]).map(z=>z.description).join(' '));
   const mv=(g?.movies||[]).map(v=>({n:v.name,poster:v.thumbnail,src:v.mp4?.max||v.webm?.max||v.hls_h264||v.mp4?.['480']||''})).filter(v=>v.src).slice(0,6);
   if(mv.length){
     const play=k=>{$('dv').querySelector('video').outerHTML='<video controls playsinline poster="'+esc(mv[k].poster)+'" src="'+esc(mv[k].src)+'"></video>'};
@@ -299,11 +325,12 @@ $('list').addEventListener('click',e=>{const a=e.target.closest('.g');if(a){e.pr
 let tm;$('q').oninput=()=>{clearTimeout(tm);tm=setTimeout(mostra,250)};
 $('ord').onchange=()=>{store.set('ord',$('ord').value);mostra()};
 try{localStorage.removeItem('dati_v1')}catch(e){}
-$('solo').onchange=mostra;
+$('solo').onchange=mostra;$('da').onchange=mostra;$('al').onchange=mostra;$('cat').onchange=mostra;
+$('ord2').addEventListener('click',menu);
 window.addEventListener('scroll',()=>{if(innerHeight+scrollY>document.body.offsetHeight-500)altri()});
 if(store.get('ord'))$('ord').value=store.get('ord');
 let c=null;try{c=JSON.parse(store.get('dati')||'null')}catch(e){}
-if(c&&c.G&&c.G.length&&Date.now()-c.t<864e5*7){G=c.G;fonti=c.fonti||'';if(c.v!==3)for(const o of G)if(!o.img)delete o.tr;if(c.v!==2&&c.v!==3)for(const o of G){delete o.sid;delete o.st;delete o.r;delete o.rv;if(/steam/.test(o.img||'')){o.img='';delete o.tr}}mostra()}else scarica();
+if(c&&c.G&&c.G.length&&Date.now()-c.t<864e5*7){G=c.G;fonti=c.fonti||'';menu();if(c.v!==3&&c.v!==4)for(const o of G)if(!o.img)delete o.tr;if(c.v<2||!c.v)for(const o of G){delete o.sid;delete o.st;delete o.r;delete o.rv;if(/steam/.test(o.img||'')){o.img='';delete o.tr}}mostra();if(c.v!==4)scarica()}else scarica();
 }
 </script>
 </body>
